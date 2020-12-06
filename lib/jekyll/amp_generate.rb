@@ -31,10 +31,37 @@ module Jekyll
     priority :low
     def generate(site)
       dir = site.config['ampdir'] || 'amp'
-      site.posts.docs.each do |post|
-        next if post.data['skip_amp'] == true
-        site.pages << AmpPost.new(site, site.source, File.join(dir, post.id), post)
+      thread_count = (ENV['THREADCOUNT'] || 8).to_i
+
+      puts "using #{thread_count} threads for processing to AMP pages"
+      puts "there are #{site.posts.docs.length} articles to process"
+
+      queue = Queue.new
+      threads = []
+
+      site.posts.docs
+        .reject { |post| post.data['skip_amp'] }
+        .each   { |post| queue << post }
+
+      thread_count.times do
+        threads << Thread.new do
+          loop do
+            break if queue.empty?
+            post = queue.pop(true) rescue nil
+            if post
+              # index = AmpPost.new(site, site.source, File.join(dir, post.id), post)
+              # index.render(site.layouts, site.site_payload)
+              # index.write(site.dest)
+              # site.pages << index
+              site.pages << AmpPost.new(site, site.source, File.join(dir, post.id), post)
+            end
+          end
+          # when there is no more work, the thread will stop
+        end
       end
+      threads.each{|t| t.join}
+      puts "all AMP posts generated"
+      #end
     end
   end
 end

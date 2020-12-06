@@ -9,7 +9,7 @@ Gem::Specification.new do |spec|
   spec.description   = spec.summary
   spec.homepage      = 'https://github.com/juusaw/amp-jekyll'
   spec.license       = 'MIT'
-  spec.required_ruby_version = '>= 2.0.0'
+  spec.required_ruby_version = '>= 2.4.0'
   spec.files         = ['lib/amp-jekyll.rb', 'lib/jekyll/amp_generate.rb', 'lib/jekyll/amp_filter.rb']
   spec.require_paths = ['lib']
 

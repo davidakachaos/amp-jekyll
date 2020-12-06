@@ -12,6 +12,7 @@ module Jekyll
       doc = Nokogiri::HTML.fragment(input);
       # Add width and height to img elements lacking them
       doc.css('img:not([width])').each do |image|
+        puts "Proccesing #{image}"
         if wi && he
           image['width']  = wi
           image['height'] = he
